@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildSpanTree, Span } from "../utils/spanTree";
+import { buildSpanTree, flattenSpanTree, Span } from "../utils/spanTree";
 
 describe("buildSpanTree", () => {
   it("returns empty array when input is null, undefined, or empty", () => {
@@ -125,5 +125,45 @@ describe("buildSpanTree", () => {
     expect(tree[0].span_id).toBe("orphan");
     expect(tree[0].parent_span_id).toBe("nonexistent-parent");
     expect(tree[0].depth).toBe(0);
+  });
+});
+
+describe("flattenSpanTree", () => {
+  it("flattens a hierarchical tree back into a list in pre-order traversal", () => {
+    const spans: Span[] = [
+      {
+        span_id: "root-1",
+        type: "agent_step",
+        name: "root_one",
+        started_at: "2026-07-10T12:00:00Z",
+        ended_at: "2026-07-10T12:00:05Z",
+      },
+      {
+        span_id: "child-2",
+        parent_span_id: "root-1",
+        type: "tool_call",
+        name: "tool_1",
+        started_at: "2026-07-10T12:00:03Z",
+        ended_at: "2026-07-10T12:00:04Z",
+      },
+      {
+        span_id: "child-1",
+        parent_span_id: "root-1",
+        type: "llm_call",
+        name: "llm_1",
+        started_at: "2026-07-10T12:00:01Z",
+        ended_at: "2026-07-10T12:00:02Z",
+      },
+    ];
+
+    const tree = buildSpanTree(spans);
+    const flat = flattenSpanTree(tree);
+
+    expect(flat).toHaveLength(3);
+    // Since children are sorted chronologically, child-1 is before child-2.
+    // Pre-order traversal on root-1 should result in [root-1, child-1, child-2].
+    expect(flat[0].span_id).toBe("root-1");
+    expect(flat[1].span_id).toBe("child-1");
+    expect(flat[2].span_id).toBe("child-2");
   });
 });
