@@ -450,7 +450,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.1 — Design System & App Shell
 
-- [ ] **4.1.1 — Tailwind config and design token setup**
+- [x] **4.1.1 — Tailwind config and design token setup**
 
     **Description**: Configure Tailwind CSS with the full design token set from the design system doc. This includes the semantic color palette, custom font families, extended radius scale, and custom shadow tokens. This must be done first so all components can be built consistently.
 
@@ -463,7 +463,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Custom breakpoints added if needed: `tablet` (860px), `wide` (1180px).
     - A quick visual smoke-test page (not shipped) confirms all tokens render correctly.
 
-- [ ] **4.1.2 — App shell: sidebar navigation and layout**
+- [x] **4.1.2 — App shell: sidebar navigation and layout**
 
     **Description**: Build the persistent app shell that wraps all authenticated pages. Includes the sidebar navigation and the main content area. Navigation items link to: Traces, Settings.
 
@@ -477,7 +477,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.2 — Auth & Onboarding Pages
 
-- [ ] **4.2.1 — Login / API key setup page**
+- [x] **4.2.1 — Login / API key setup page**
 
     **Description**: Build the first-visit onboarding page where a new user can create a project (triggering `POST /v1/projects`) or paste an existing API key. After setup, the page displays the integration install snippet with the user's real API key pre-filled and a copy-to-clipboard button.
 
@@ -491,7 +491,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.3 — Trace List Page
 
-- [ ] **4.3.1 — Trace list page**
+- [x] **4.3.1 — Trace list page**
 
     **Description**: Build the main trace list page that shows all traces for the current project in a table, with filtering and the ability to click into a trace for detail.
 
@@ -508,7 +508,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.4 — Trace Detail & Span Inspector
 
-- [ ] **4.4.1 — Trace detail page with span timeline**
+- [x] **4.4.1 — Trace detail page with span timeline**
 
     **Description**: Build the trace detail page that renders the full span timeline for a selected trace. Spans are shown as a vertical tree (built client-side from the flat list using `parent_span_id` links), indented by depth, with error spans visually distinct.
 
@@ -525,7 +525,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.5 — Replay Panel
 
-- [ ] **4.5.1 — Replay panel UI and diff view**
+- [x] **4.5.1 — Replay panel UI and diff view**
 
     **Description**: Build the replay panel that opens when a user clicks "Replay" on an `llm_call` span. The panel provides editable fields for the span's inputs, a replay action that calls the backend, and a diff view comparing the original and replayed outputs.
 
@@ -542,7 +542,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.6 — Settings Page
 
-- [ ] **4.6.1 — Settings page**
+- [x] **4.6.1 — Settings page**
 
     **Description**: Build the settings page that lets the user view their API key and project info.
 
@@ -554,7 +554,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.7 — Frontend Unit & Component Tests
 
-- [ ] **4.7.1 — Unit tests for span tree builder utility**
+- [x] **4.7.1 — Unit tests for span tree builder utility**
 
     **Description**: The trace detail page builds a parent/child tree from a flat `spans` list. Write Vitest unit tests for this pure function, which is the most logic-heavy piece of frontend code.
 
@@ -567,7 +567,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: a span whose `parent_span_id` references a nonexistent span is placed at root level (graceful handling).
     - 100% branch coverage on the tree-builder function.
 
-- [ ] **4.7.2 — Component tests for the trace list table**
+- [x] **4.7.2 — Component tests for the trace list table**
 
     **Description**: Write Vitest + Testing Library component tests for the trace list table, mocking the API fetch layer with MSW (Mock Service Worker) or a similar tool.
 
@@ -581,7 +581,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: `?status=error` filter is applied when "Errors only" is selected.
     - Covers: clicking a row triggers navigation to the correct trace detail URL.
 
-- [ ] **4.7.3 — Component tests for the replay panel**
+- [x] **4.7.3 — Component tests for the replay panel**
 
     **Description**: Write Vitest + Testing Library component tests for the replay panel component, covering the edit-and-submit flow.
 
@@ -597,7 +597,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 4.8 — Frontend E2E Tests (Playwright)
 
-- [ ] **4.8.1 — E2E: onboarding and project creation flow**
+- [x] **4.8.1 — E2E: onboarding and project creation flow**
 
     **Description**: Write a Playwright test that navigates through the full onboarding flow: creating a project, receiving an API key, and viewing the install snippet.
 
@@ -608,7 +608,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: the install snippet tab for LangChain is visible and contains the substituted API key.
     - Covers: the copy button copies the snippet to clipboard (or asserts the button is present and clickable).
 
-- [ ] **4.8.2 — E2E: trace list and trace detail navigation**
+- [x] **4.8.2 — E2E: trace list and trace detail navigation**
 
     **Description**: Write a Playwright test that navigates the trace list, applies a filter, and opens a trace detail page.
 
@@ -620,7 +620,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: trace detail page shows the span timeline with at least one span.
     - Covers: clicking a span expands it to show input and output details.
 
-- [ ] **4.8.3 — E2E: replay panel flow**
+- [x] **4.8.3 — E2E: replay panel flow**
 
     **Description**: Write a Playwright test that opens the replay panel on an `llm_call` span, edits the system prompt, submits a replay, and verifies the diff view renders.
 
