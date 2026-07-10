@@ -29,7 +29,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 0.1 — Python Tooling Setup
 
-- [ ] **0.1.1 — Configure ruff and black for Python**
+- [x] **0.1.1 — Configure ruff and black for Python**
 
     **Description**: Set up `ruff` and `black` as the standard formatting and linting tools for all Python code in the repo. Both must be enforced in CI so no unformatted or lint-failing code can be merged.
 
@@ -40,7 +40,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - CI pipeline step runs this check and fails the build on any violation.
     - All existing Python files pass both tools on first run (or are fixed before this item is closed).
 
-- [ ] **0.1.2 — Configure pytest and shared test fixtures**
+- [x] **0.1.2 — Configure pytest and shared test fixtures**
 
     **Description**: Set up pytest as the test runner for all Python code. Create the shared fixtures and factory helpers that all other test modules will rely on: sample trace builders, mock HTTP responses, a test database client.
 

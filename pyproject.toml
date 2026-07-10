@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# ---------------------------------------------------------------------------
+# Project metadata (workspace root — not a publishable package itself)
+# ---------------------------------------------------------------------------
+[project]
+name = "statica-trace"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Statica Trace — Agent replay debugger"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentreplay*", "backend*"]
+
+[project.optional-dependencies]
+dev = [
+    # formatting / linting
+    "black==24.10.0",
+    "ruff==0.9.0",
+    # testing
+    "pytest==8.3.4",
+    "pytest-cov==6.0.0",
+    "pytest-httpx==0.35.0",
+    # pydantic (shared by SDK + backend)
+    "pydantic==2.10.4",
+]
+
+# ---------------------------------------------------------------------------
+# Black
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+# ---------------------------------------------------------------------------
+# Ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["agentreplay", "backend"]
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests", "agentreplay/tests", "backend/tests"]
+addopts = "--tb=short --cov=. --cov-report=term-missing --cov-fail-under=80"

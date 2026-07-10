@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # -----------------------------------------------------------------------
+  # 0.1.1 — Python lint (ruff + black)
+  # 0.1.2 — Python test suite with coverage
+  # -----------------------------------------------------------------------
+  python:
+    name: Python lint & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Lint (ruff + black) — 0.1.1
+        run: make lint
+
+      - name: Test with coverage — 0.1.2
+        run: make test
+
+  # -----------------------------------------------------------------------
+  # 0.2.1 — Frontend unit tests with Vitest
+  # -----------------------------------------------------------------------
+  frontend-unit:
+    name: Frontend unit tests (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests with coverage — 0.2.1
+        run: npm run test:coverage
+
+  # -----------------------------------------------------------------------
+  # 0.2.2 — Frontend E2E tests with Playwright
+  #         (only runs on PRs touching frontend code)
+  # -----------------------------------------------------------------------
+  frontend-e2e:
+    name: Frontend E2E tests (Playwright)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests — 0.2.2
+        run: npm run test:e2e
