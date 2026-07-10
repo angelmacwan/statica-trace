@@ -21,7 +21,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 **Frontend** uses **Vitest** for unit/component tests and **Playwright** for end-to-end browser tests.
 
-**System tests** (Module 8) spin up the real backend + real database in Docker and run full flows end-to-end, validating that every layer integrates correctly before a release.
+**System tests** (Module 7) run the real backend locally in the background against a dedicated test database (SQLite/Postgres) and run full flows end-to-end natively without Docker.
 
 ---
 
@@ -723,21 +723,22 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ## Module 7 — Full System Tests
 
-> These tests treat the entire product as a black box. They spin up the real backend (via Docker Compose or a dedicated test environment) connected to a real test database, and drive flows from the SDK or HTTP client all the way through to the database. They are the final quality gate before any release.
+> These tests treat the entire product as a black box. They spin up the real backend natively (running as a local process in the background) connected to a dedicated test database (such as a local SQLite file or native PostgreSQL), and drive flows from the SDK or HTTP client all the way through to the database. They are the final quality gate before any release.
 
 ### Sprint 7.1 — System Test Infrastructure
 
-- [ ] **7.1.1 — Docker Compose test environment**
+- [ ] **7.1.1 — Native system test runner and environment**
 
-    **Description**: Create a `docker-compose.test.yml` that starts the FastAPI backend and a Postgres database together, applies migrations, and makes the stack ready for system tests. This environment is used exclusively for testing — not for production.
+    **Description**: Create a system test runner script or Makefile target (`make system-test`) that starts the FastAPI backend natively as a background process (pointing to a dedicated test database, e.g., an isolated SQLite database file or a local native Postgres instance), waits for it to be healthy, runs the system test suite, and reliably tears down the background server on completion.
 
     **Acceptance Criteria**:
-    - `docker-compose.test.yml` defines two services: `backend` (FastAPI) and `db` (Postgres).
-    - Running `docker compose -f docker-compose.test.yml up -d` starts both services.
-    - Migrations are applied automatically on startup (via entrypoint script or migration service).
-    - A `make system-test` (or equivalent) command: starts the Docker environment, waits for health check, runs the system test suite, and tears down.
-    - CI pipeline runs this command; failures block merge.
-    - Test database is isolated from any production database (separate credentials, separate host).
+    - A `make system-test` (or equivalent script) starts the FastAPI backend using `uvicorn` in the background with `DATABASE_URL` set to an isolated test database (e.g., `sqlite+aiosqlite:///./statica_trace_system_test.db`).
+    - The test runner automatically waits for the backend port (e.g. 8000) to be open/healthy before launching tests.
+    - The test runner applies database tables and indexes to the test database prior to running tests.
+    - Running `make system-test` runs the entire system test suite using `pytest tests/system`.
+    - The runner ensures the background uvicorn process is terminated (teardown) when tests finish, even if tests fail (e.g., using a bash `trap` or Python script wrapper).
+    - CI pipeline runs this command natively; failures block merge.
+    - Test database is isolated from dev and production databases.
 
 - [ ] **7.1.2 — System test shared fixtures and helpers**
 
@@ -764,7 +765,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: `GET /v1/projects/me` with the returned key returns the correct project name.
     - Covers: `GET /v1/projects/me` with an invalid key returns 401.
     - Covers: two separate projects created in the same test cannot access each other's data.
-    - Tests run against the live Docker test environment (real Postgres, real FastAPI).
+    - Tests run against the live natively running test environment (real database, real FastAPI).
 
 - [ ] **7.2.2 — System test: SDK → ingest → retrieval pipeline**
 

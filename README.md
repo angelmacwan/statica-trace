@@ -196,7 +196,7 @@ Below is the current project progress tracked in [backlog.md](file:///Users/ange
 | **Module 3** | Python Capture SDK (`agentreplay`) | ✅ Completed | Scaffolding, buffer batching, LangChain callbacks, client SDK. |
 | **Module 4** | Frontend Dashboard (UI) | ✅ Completed | Tailwind configuration, trace timeline, replay panel, diff views. |
 | **Module 5** | Polishing & Deployment | 📅 In Backlog | Empty states, error loading components, deployments. |
-| **Module 7** | System Testing | 📅 In Backlog | Docker environment, full end-to-end integration flows. |
+| **Module 7** | System Testing | 📅 In Backlog | Native environment, full end-to-end integration flows. |
 | **Module 8** | JS/TS SDK & Advanced Features | 📅 In Backlog | Vercel AI SDK wrapper, persistent provider keys. |
 
 ---
