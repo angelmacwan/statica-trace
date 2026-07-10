@@ -283,7 +283,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 3.1 — SDK Foundation
 
-- [ ] **3.1.1 — Python package scaffolding and `client.py`**
+- [x] **3.1.1 — Python package scaffolding and `client.py`**
 
     **Description**: Initialize the `agentreplay` Python package with its full folder structure and implement `client.py`, the core networking layer that handles auth and sends traces to the backend ingest endpoint. All other SDK modules depend on this client.
 
@@ -296,7 +296,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Packaged with `pyproject.toml` and installable via `pip install .`.
     - All files pass `ruff` and `black`.
 
-- [ ] **3.1.2 — Send buffer and batching (`buffer.py`)**
+- [x] **3.1.2 — Send buffer and batching (`buffer.py`)**
 
     **Description**: Implement the local in-memory queue and background flush mechanism. Traces should be batched and sent periodically rather than one HTTP request per span, to minimize overhead on the user's agent code.
 
@@ -309,7 +309,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 3.2 — Tier 1 Adapters
 
-- [ ] **3.2.1 — LangChain / LangGraph callback handler (`langchain.py`)**
+- [x] **3.2.1 — LangChain / LangGraph callback handler (`langchain.py`)**
 
     **Description**: Implement `AgentReplayCallbackHandler`, a `BaseCallbackHandler` subclass that hooks into the LangChain callback lifecycle to capture a full trace across a chain or graph run, then sends it via `client.py` on completion.
 
@@ -322,7 +322,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - A real LangChain chain run produces a correctly structured trace in the database.
     - Captured spans include: messages, model name, params, tool schemas (if tool-calling), and output.
 
-- [ ] **3.2.2 — OpenAI SDK wrapper (`openai_wrapper.py`)**
+- [x] **3.2.2 — OpenAI SDK wrapper (`openai_wrapper.py`)**
 
     **Description**: Implement the `wrap()` function that transparently wraps an `openai.OpenAI` client so that all `chat.completions.create()` calls are automatically captured as traces, without changing any return values or behavior for the caller.
 
@@ -334,7 +334,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Errors from the OpenAI API are re-raised unchanged; the span is captured with `status: error`.
     - A real call through the wrapped client produces a correctly structured trace in the database.
 
-- [ ] **3.2.3 — Anthropic SDK wrapper (`anthropic_wrapper.py`)**
+- [x] **3.2.3 — Anthropic SDK wrapper (`anthropic_wrapper.py`)**
 
     **Description**: Implement the same transparent wrapping pattern as `openai_wrapper.py` but for the `anthropic.Anthropic().messages.create(...)` call path.
 
@@ -348,7 +348,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 3.3 — Tier 2 OTel Bridge
 
-- [ ] **3.3.1 — OpenTelemetry span exporter (`otel_exporter.py`)**
+- [x] **3.3.1 — OpenTelemetry span exporter (`otel_exporter.py`)**
 
     **Description**: Implement a standard OTel `SpanExporter` that maps incoming OTel GenAI semantic-convention spans (as emitted by OpenLLMetry/Traceloop and compatible libraries) to the universal trace schema, then forwards them via `client.py`. This is the Tier 2 coverage mechanism for frameworks like CrewAI, LlamaIndex, AutoGen, LiteLLM, Vercel AI SDK, and Google Gemini SDK.
 
@@ -362,7 +362,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 3.4 — SDK Unit Tests
 
-- [ ] **3.4.1 — Unit tests for `client.py` and `buffer.py`**
+- [x] **3.4.1 — Unit tests for `client.py` and `buffer.py`**
 
     **Description**: Write pytest unit tests for the networking client and buffer. The outbound HTTP POST to the ingest endpoint is mocked — no real server needed.
 
@@ -382,7 +382,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
         - Final flush is attempted on process exit.
     - All HTTP calls mocked; no real network traffic.
 
-- [ ] **3.4.2 — Unit tests for `langchain.py` (with real LangChain, mocked LLM)**
+- [x] **3.4.2 — Unit tests for `langchain.py` (with real LangChain, mocked LLM)**
 
     **Description**: Write pytest tests for `AgentReplayCallbackHandler` using **real LangChain library code** but with a mocked LLM (LangChain's `FakeListLLM` or a mock that returns a canned response). The handler is invoked through an actual LangChain chain so the full callback lifecycle is exercised. The outbound send to the backend is also mocked.
 
@@ -399,7 +399,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: handler does not alter the chain's return value.
     - No real OpenAI/Anthropic/etc. API calls.
 
-- [ ] **3.4.3 — Unit tests for `openai_wrapper.py` (with real OpenAI SDK, mocked HTTP)**
+- [x] **3.4.3 — Unit tests for `openai_wrapper.py` (with real OpenAI SDK, mocked HTTP)**
 
     **Description**: Write pytest tests for the OpenAI wrapper using the **real `openai` Python SDK** but intercepting its outbound HTTP calls with `pytest-httpx` or `respx`. This exercises the SDK's internal request building and response parsing together with our wrapping logic.
 
@@ -414,7 +414,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: the backend send is also mocked; asserts the trace is sent with correct content.
     - No real OpenAI API calls; no real network traffic.
 
-- [ ] **3.4.4 — Unit tests for `anthropic_wrapper.py` (with real Anthropic SDK, mocked HTTP)**
+- [x] **3.4.4 — Unit tests for `anthropic_wrapper.py` (with real Anthropic SDK, mocked HTTP)**
 
     **Description**: Write pytest tests for the Anthropic wrapper following the exact same pattern as `3.4.3` but for the `anthropic` SDK.
 
@@ -429,7 +429,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: the backend send is mocked; asserts correct trace content.
     - No real Anthropic API calls; no real network traffic.
 
-- [ ] **3.4.5 — Unit tests for `otel_exporter.py` (with real OpenTelemetry SDK)**
+- [x] **3.4.5 — Unit tests for `otel_exporter.py` (with real OpenTelemetry SDK)**
 
     **Description**: Write pytest tests for the OTel exporter using the **real `opentelemetry-sdk`** library to emit spans and routing them through the exporter. The exporter's outbound send to the backend is mocked.
 

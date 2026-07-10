@@ -5,6 +5,7 @@ This guide details how different AI Agent frameworks and LLM SDKs integrate with
 ---
 
 ## 📖 Table of Contents
+
 1. [🎯 Instrumentation Strategy](#-instrumentation-strategy)
 2. [📊 Data Models & Trace Schema](#-data-models-&-trace-schema)
 3. [🔌 Deep Support (Tier 1)](#-deep-support-tier-1)
@@ -25,8 +26,8 @@ Statica Trace implements a **two-tier capture strategy** designed to maximize fr
        └─► Tier 2: OpenTelemetry GenAI Convention Spans (CrewAI, AutoGen) ──► Trace Ingestion Bridge
 ```
 
-*   **Tier 1 (Deep Support)**: First-class SDK integrations that capture fully structured inputs (editable system messages, user prompts, parameters, tool schemas, and output tokens). This tier supports complete step-level editing and replay.
-*   **Tier 2 (Broad Support)**: Collects spans generically via an OpenTelemetry (OTel) bridge utilizing GenAI semantic-convention schemas (e.g., via libraries like OpenLLMetry or Traceloop). This enables trace viewing out-of-the-box for CrewAI, LlamaIndex, AutoGen, Vercel AI SDK, and others.
+- **Tier 1 (Deep Support)**: First-class SDK integrations that capture fully structured inputs (editable system messages, user prompts, parameters, tool schemas, and output tokens). This tier supports complete step-level editing and replay.
+- **Tier 2 (Broad Support)**: Collects spans generically via an OpenTelemetry (OTel) bridge utilizing GenAI semantic-convention schemas (e.g., via libraries like OpenLLMetry or Traceloop). This enables trace viewing out-of-the-box for CrewAI, LlamaIndex, AutoGen, Vercel AI SDK, and others.
 
 ---
 
@@ -35,6 +36,7 @@ Statica Trace implements a **two-tier capture strategy** designed to maximize fr
 All client-side instrumentation must normalize execution data into the universal trace schema defined in [agentreplay/schema.py](file:///Users/angel/Documents/repo/agentreplay/schema.py).
 
 ### Trace Structure
+
 A **Trace** represents a single complete run of an agent system (e.g., a multi-turn chat session or a graph execution). It consists of metadata and a flat list of Spans.
 
 ```json
@@ -50,10 +52,13 @@ A **Trace** represents a single complete run of an agent system (e.g., a multi-t
 ```
 
 ### Spans
+
 A **Span** represents a discrete unit of work within a trace. Spans are stored in a flat array, using `parent_span_id` to establish parent/child relationships that are rendered as a tree in the dashboard.
 
 #### Span Types
+
 Spans in Statica Trace support four primary types defined in [SpanType](file:///Users/angel/Documents/repo/agentreplay/schema.py):
+
 1.  `llm_call`: A direct query to an LLM provider. **These are the only spans eligible for replay debugging.**
 2.  `tool_call`: The execution of a local tool or function.
 3.  `retrieval`: A database or vector lookup (provides source context for RAG).
@@ -61,41 +66,41 @@ Spans in Statica Trace support four primary types defined in [SpanType](file:///
 
 ```json
 {
-  "span_id": "4a7b5d92-284f-4d36-8a71-f925b6826131",
-  "parent_span_id": "0291e92d-e8cf-4822-ba74-d4b8e2172159",
-  "type": "llm_call",
-  "name": "chat_completion",
-  "started_at": "2026-07-10T11:45:01.100Z",
-  "ended_at": "2026-07-10T11:45:02.800Z",
-  "input": {
-    "model": "gpt-4o",
-    "messages": [
-      { "role": "system", "content": "You are a helpful assistant." },
-      { "role": "user", "content": "Fetch the weather in San Francisco." }
-    ],
-    "params": { "temperature": 0.0, "max_tokens": 150 },
-    "tools": [
-      {
-        "name": "get_weather",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "location": { "type": "string" }
-          }
-        }
-      }
-    ]
-  },
-  "output": {
-    "content": null,
-    "tool_calls": [
-      {
-        "name": "get_weather",
-        "arguments": { "location": "San Francisco, CA" }
-      }
-    ]
-  },
-  "error": null
+	"span_id": "4a7b5d92-284f-4d36-8a71-f925b6826131",
+	"parent_span_id": "0291e92d-e8cf-4822-ba74-d4b8e2172159",
+	"type": "llm_call",
+	"name": "chat_completion",
+	"started_at": "2026-07-10T11:45:01.100Z",
+	"ended_at": "2026-07-10T11:45:02.800Z",
+	"input": {
+		"model": "gpt-4o",
+		"messages": [
+			{ "role": "system", "content": "You are a helpful assistant." },
+			{ "role": "user", "content": "Fetch the weather in San Francisco." }
+		],
+		"params": { "temperature": 0.0, "max_tokens": 150 },
+		"tools": [
+			{
+				"name": "get_weather",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"location": { "type": "string" }
+					}
+				}
+			}
+		]
+	},
+	"output": {
+		"content": null,
+		"tool_calls": [
+			{
+				"name": "get_weather",
+				"arguments": { "location": "San Francisco, CA" }
+			}
+		]
+	},
+	"error": null
 }
 ```
 
@@ -104,9 +109,11 @@ Spans in Statica Trace support four primary types defined in [SpanType](file:///
 ## 🔌 Deep Support (Tier 1)
 
 ### 🦜 1. LangChain & LangGraph Callback Handler
+
 The LangChain callback handler (`langchain.py`) implements LangChain's `BaseCallbackHandler`. It intercepts hook points (`on_llm_start`, `on_llm_end`, etc.) and correlates the events using LangChain's internal `run_id`.
 
 **Usage:**
+
 ```python
 from agentreplay.langchain import AgentReplayCallbackHandler
 from langchain_openai import ChatOpenAI
@@ -119,15 +126,17 @@ llm = ChatOpenAI(model="gpt-4o")
 chain = prompt | llm
 
 chain.invoke(
-    {"input": "Hello!"}, 
+    {"input": "Hello!"},
     config={"callbacks": [handler]}
 )
 ```
 
 ### 🧠 2. Raw SDK Client Wrappers
+
 For applications that call models directly, Statica Trace provides transparent client wrappers that intercept API calls to capture input parameters, prompts, and output structures.
 
 #### OpenAI wrapper example:
+
 ```python
 import openai
 from agentreplay.openai_wrapper import wrap
@@ -143,6 +152,7 @@ response = client.chat.completions.create(
 ```
 
 #### Anthropic wrapper example:
+
 ```python
 import anthropic
 from agentreplay.anthropic_wrapper import wrap
@@ -187,6 +197,7 @@ trace.set_tracer_provider(provider)
 When a developer clicks **"Replay"** in the frontend dashboard, a request is sent to the backend endpoint `/v1/replay` containing the modified parameters.
 
 ### Replay Execution Sequence
+
 1.  **Request Handshake**: The frontend sends a request containing the trace ID, the target span ID, and the edited inputs (e.g. prompt, temperature, parameters), along with the developer's raw provider key in the header `X-Provider-Api-Key`.
 2.  **Trace Lookup**: [backend/main.py](file:///Users/angel/Documents/repo/backend/main.py#L307) fetches the original trace from the database.
 3.  **Span Isolation**: The engine extracts the target span from the trace payload and ensures that it is of type `llm_call`.
@@ -206,3 +217,4 @@ When a developer clicks **"Replay"** in the frontend dashboard, a request is sen
 > [!NOTE]
 > The [README.md](file:///Users/angel/Documents/repo/README.md) and [agents.md](file:///Users/angel/Documents/repo/agents.md) files should update as the code changes. This just makes sure that the README and agents MD files remain updated at all times.
 
+> update the backlog as we make progress. eg: if i ask to impliment module 2, once dont mark that module as done in backlog. or if i ask to just work on spring 1.3, after completing the task matk that spirint as dont in backlog
