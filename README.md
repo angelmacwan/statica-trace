@@ -166,6 +166,21 @@ Here is the high-level outline of the repository:
     cd frontend
     npm run test:e2e
     ```
+### 🚀 Running the Full Local Validation Pipeline (CI/CD)
+
+It is highly recommended as a best practice to run the entire verification suite locally before pushing code. This ensures that the remote CI/CD pipeline will pass without issues.
+
+To execute all checks sequentially, run:
+```bash
+make ci
+```
+
+This single command automatically runs:
+1. **Python Quality**: Formatting and lint checks via `ruff` and `black`.
+2. **Backend/SDK Tests**: The full `pytest` suite with coverage checks.
+3. **Frontend Quality**: ESLint code validation.
+4. **Frontend Unit Tests**: Component and utility tests via `vitest`.
+5. **Frontend E2E Tests**: Interactive browser-level integration testing via `playwright`.
 
 ---
 

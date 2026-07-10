@@ -26,3 +26,17 @@ fmt:
 # ---------------------------------------------------------------------------
 test:
 	pytest
+
+# ---------------------------------------------------------------------------
+# Run entire validation suite locally (equivalent to the CI pipeline)
+# ---------------------------------------------------------------------------
+ci: lint test
+	@echo "=== Running Frontend Linting ==="
+	cd frontend && npm run lint
+	@echo "=== Running Frontend Unit Tests ==="
+	cd frontend && npm run test
+	@echo "=== Running Frontend E2E Tests ==="
+	cd frontend && npm run test:e2e
+	@echo "=== All checks passed successfully! Ready to push. ==="
+
+.PHONY: lint test install ci fmt
