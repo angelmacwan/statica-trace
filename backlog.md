@@ -54,7 +54,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 0.2 — Frontend Tooling Setup
 
-- [ ] **0.2.1 — Configure Vitest for frontend unit and component tests**
+- [x] **0.2.1 — Configure Vitest for frontend unit and component tests**
 
     **Description**: Set up Vitest as the frontend test runner. Configure it with jsdom for component testing and add the initial test utilities.
 
@@ -66,7 +66,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - CI pipeline runs frontend tests and fails on failure or coverage drop.
     - A trivial smoke test exists and passes (e.g. renders a `<Button>` component and asserts it's in the DOM).
 
-- [ ] **0.2.2 — Configure Playwright for end-to-end browser tests**
+- [x] **0.2.2 — Configure Playwright for end-to-end browser tests**
 
     **Description**: Set up Playwright as the E2E test framework for the frontend. Configure it to run against a local dev server or a staging environment.
 
@@ -83,7 +83,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 1.1 — Core Schema
 
-- [ ] **1.1.1 — Define Pydantic trace schema (`schema.py`)**
+- [x] **1.1.1 — Define Pydantic trace schema (`schema.py`)**
 
     **Description**: Create the canonical Pydantic data models that represent the universal trace schema. Every capture path (custom SDK adapters and OTel bridge) must normalize into this shape before storage. This is the single most critical file in the project — all other modules depend on it being correct.
 
@@ -98,7 +98,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 1.2 — Schema Unit Tests
 
-- [ ] **1.2.1 — Unit tests for `schema.py`**
+- [x] **1.2.1 — Unit tests for `schema.py`**
 
     **Description**: Write a thorough pytest test suite for all Pydantic models in `schema.py`. Tests should cover valid construction, serialization round-trips, validation errors on bad input, and all optional field combinations.
 
