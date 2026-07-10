@@ -22,3 +22,11 @@ frontend/coverage/
 # Misc
 .DS_Store
 *.env
+
+# Local Databases & Testing
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+scripts/
+
