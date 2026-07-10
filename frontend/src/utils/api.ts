@@ -1,4 +1,7 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = (import.meta.env.VITE_API_BASE as string) || 
+  ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") 
+    ? "http://localhost:8000" 
+    : window.location.origin);
 
 export function getApiKey(): string | null {
   return localStorage.getItem("statica_api_key");

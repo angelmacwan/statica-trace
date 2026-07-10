@@ -208,4 +208,5 @@ For deep technical details, refer to:
 *   [Design System Documentation](file:///Users/angel/Documents/repo/DOCS/design-system-doc.md) — Tokens, UI components, colors, and Tailwind configuration layout.
 *   [Agent Integration & Instrumentation Guide](file:///Users/angel/Documents/repo/agents.md) — Technical details of how agent frameworks hook into the debugger.
 *   [Local Running & Testing Guide](file:///Users/angel/Documents/repo/DOCS/local-testing-guide.md) — Step-by-step instructions on deploying and testing Statica Trace locally.
+*   [Production Deployment Guide](file:///Users/angel/Documents/repo/DOCS/deployment-guide.md) — Complete guide to hosting Statica Trace in production on a VPS like Linode.
 

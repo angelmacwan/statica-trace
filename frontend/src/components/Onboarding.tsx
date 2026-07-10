@@ -78,6 +78,10 @@ export function Onboarding({ onSuccess }: OnboardingProps) {
 
   const getSnippets = (key: string) => {
     const displayKey = key || "YOUR_STATICA_API_KEY";
+    const apiBase = (import.meta.env.VITE_API_BASE as string) || 
+      ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") 
+        ? "http://localhost:8000" 
+        : window.location.origin);
     return {
       langchain: `from agentreplay.langchain import AgentReplayCallbackHandler
 from langchain_openai import ChatOpenAI
@@ -112,7 +116,7 @@ from agentreplay.otel_exporter import AgentReplayOTelExporter
 # 1. Configure the exporter pointing to Statica Trace
 exporter = AgentReplayOTelExporter(
     api_key="${displayKey}",
-    endpoint="http://localhost:8000/v1/ingest"
+    endpoint="${apiBase}/v1/ingest"
 )
 
 # 2. Add processor to TracerProvider

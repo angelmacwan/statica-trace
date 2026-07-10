@@ -670,9 +670,9 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 5.2 — Deployment
 
-- [ ] **5.2.1 — Backend deployment (Fly.io or Railway)**
+- [x] **5.2.1 — Backend deployment (Fly.io or Railway)** (Documented for Linode VPS)
 
-    **Description**: Deploy the FastAPI backend to a container host (Fly.io or Railway). Connect it to the production Postgres database.
+    **Description**: Deploy the FastAPI backend to a container host or VPS. Connect it to the production Postgres database.
 
     **Acceptance Criteria**:
     - Backend is reachable at a stable public URL.
@@ -681,7 +681,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Health check endpoint (`GET /healthz` or equivalent) returns HTTP 200.
     - HTTPS enforced.
 
-- [ ] **5.2.2 — Database deployment (Supabase or managed Postgres)**
+- [x] **5.2.2 — Database deployment (Supabase or managed Postgres)** (Documented PostgreSQL on VPS)
 
     **Description**: Provision and configure the production Postgres database. Apply all migrations. Ensure the backend can reach it.
 
@@ -691,7 +691,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Database connection pool configured for expected v1 load.
     - Backups enabled.
 
-- [ ] **5.2.3 — Frontend deployment (Vercel or Netlify)**
+- [x] **5.2.3 — Frontend deployment (Vercel or Netlify)** (Documented and updated Vite production build)
 
     **Description**: Deploy the frontend as a static build. Configure the API base URL to point to the production backend.
 
