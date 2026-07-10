@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiFetch } from "../utils/api";
 
 interface TraceListItem {
@@ -21,25 +21,26 @@ export function TraceList({ onSelectTrace, onGoToOnboarding }: TraceListProps) {
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "success" | "error">("all");
 
-  useEffect(() => {
-    async function fetchTraces() {
-      try {
-        setLoading(true);
-        setError("");
-        let path = "/v1/traces";
-        if (statusFilter !== "all") {
-          path += `?status=${statusFilter}`;
-        }
-        const data = await apiFetch(path);
-        setTraces(data.items || []);
-      } catch (err: any) {
-        setError(err.message || "Failed to load traces.");
-      } finally {
-        setLoading(false);
+  const fetchTraces = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      let path = "/v1/traces";
+      if (statusFilter !== "all") {
+        path += `?status=${statusFilter}`;
       }
+      const data = await apiFetch(path);
+      setTraces(data.items || []);
+    } catch (err: any) {
+      setError(err.message || "Failed to load traces.");
+    } finally {
+      setLoading(false);
     }
-    fetchTraces();
   }, [statusFilter]);
+
+  useEffect(() => {
+    fetchTraces();
+  }, [fetchTraces]);
 
   const formatDuration = (ms: number | null) => {
     if (ms === null || ms === undefined) return "-";
@@ -84,8 +85,15 @@ export function TraceList({ onSelectTrace, onGoToOnboarding }: TraceListProps) {
       </div>
 
       {error && (
-        <div className="bg-error-container text-error rounded-xl p-4 font-medium border border-error/10 text-sm">
-          {error}
+        <div className="bg-error-container text-error rounded-xl p-4 font-medium border border-error/10 text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" data-testid="error-banner">
+          <span>{error}</span>
+          <button
+            onClick={() => fetchTraces()}
+            className="px-3 py-1.5 bg-error text-on-error hover:opacity-90 rounded-lg text-xs font-semibold transition shrink-0 self-start sm:self-center"
+            data-testid="retry-btn"
+          >
+            Retry
+          </button>
         </div>
       )}
 

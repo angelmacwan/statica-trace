@@ -31,6 +31,10 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      clearApiKey();
+      window.dispatchEvent(new Event("auth_failure"));
+    }
     let errorDetail = "";
     try {
       const data = await response.json();
@@ -38,7 +42,10 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     } catch {
       errorDetail = response.statusText;
     }
-    throw new Error(errorDetail || `Request failed with status ${response.status}`);
+    const message = errorDetail || `Request failed with status ${response.status}`;
+    const error: any = new Error(message);
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();

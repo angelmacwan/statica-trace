@@ -637,7 +637,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 5.1 — Frontend Polish
 
-- [ ] **5.1.1 — Empty states across all pages**
+- [x] **5.1.1 — Empty states across all pages**
 
     **Description**: Ensure every page and data-heavy component has a well-designed empty state so the app never shows a broken or blank screen when there is no data.
 
@@ -647,7 +647,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - All empty states use the design system's surface colors and typography.
     - Empty states include a helpful action or next step — not just text.
 
-- [ ] **5.1.2 — Loading states across all pages**
+- [x] **5.1.2 — Loading states across all pages**
 
     **Description**: Add consistent loading feedback for all async data fetches across the app.
 
@@ -657,7 +657,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Replay panel: button shows loading/spinner state while `POST /v1/replay` is in flight; button is disabled during this time.
     - No layout shift when data loads in.
 
-- [ ] **5.1.3 — Error states and API error handling**
+- [x] **5.1.3 — Error states and API error handling**
 
     **Description**: Add error handling so the app degrades gracefully when API calls fail (network error, 401, 404, 500).
 

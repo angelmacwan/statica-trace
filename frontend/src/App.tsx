@@ -13,6 +13,11 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [replaySpan, setReplaySpan] = useState<any>(null);
 
+  const navigate = (path: string) => {
+    window.history.pushState(null, "", path);
+    setCurrentPath(path);
+  };
+
   // Watch for history state path shifts
   useEffect(() => {
     const handlePopState = () => {
@@ -22,10 +27,15 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  const navigate = (path: string) => {
-    window.history.pushState(null, "", path);
-    setCurrentPath(path);
-  };
+  // Listen for global auth failure events (401)
+  useEffect(() => {
+    const handleAuthFailure = () => {
+      setApiKeyVal(null);
+      navigate("/");
+    };
+    window.addEventListener("auth_failure", handleAuthFailure);
+    return () => window.removeEventListener("auth_failure", handleAuthFailure);
+  }, []);
 
   const handleAuthSuccess = (key: string) => {
     setApiKeyVal(key);
@@ -39,7 +49,7 @@ export default function App() {
 
   // If path is root and we have an API key, auto-redirect to traces
   useEffect(() => {
-    if (apiKey && (currentPath === "/" || currentPath === "/onboarding")) {
+    if (apiKey && currentPath === "/") {
       navigate("/traces");
     } else if (!apiKey && currentPath !== "/") {
       navigate("/");
@@ -54,6 +64,10 @@ export default function App() {
 
     if (currentPath === "/settings") {
       return <Settings onLogout={handleLogout} />;
+    }
+
+    if (currentPath === "/onboarding") {
+      return <Onboarding onSuccess={() => navigate("/traces")} />;
     }
 
     if (currentPath.startsWith("/traces/")) {
@@ -71,11 +85,7 @@ export default function App() {
     return (
       <TraceList
         onSelectTrace={(id) => navigate(`/traces/${id}`)}
-        onGoToOnboarding={() => {
-          localStorage.removeItem("statica_api_key");
-          setApiKeyVal(null);
-          navigate("/");
-        }}
+        onGoToOnboarding={() => navigate("/onboarding")}
       />
     );
   };

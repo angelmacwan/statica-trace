@@ -64,8 +64,8 @@ describe("TraceList Component", () => {
     expect(screen.getByText("1.00s")).toBeInTheDocument();
   });
 
-  it("renders an error banner when api fetch fails", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+  it("renders an error banner when api fetch fails and retries on click", async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
       ok: false,
       status: 500,
       statusText: "Internal Server Error",
@@ -76,6 +76,21 @@ describe("TraceList Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Database connection failed")).toBeInTheDocument();
+    });
+
+    const retryBtn = screen.getByRole("button", { name: /retry/i });
+    expect(retryBtn).toBeInTheDocument();
+
+    // Mock successful fetch on retry
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ items: mockTraces, total: 2, limit: 50, offset: 0 }),
+    } as any);
+
+    fireEvent.click(retryBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText(/langchain/i)).toBeInTheDocument();
     });
   });
 

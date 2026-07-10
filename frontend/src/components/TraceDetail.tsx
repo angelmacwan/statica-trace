@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiFetch } from "../utils/api";
 import { buildSpanTree, flattenSpanTree, SpanTreeNode } from "../utils/spanTree";
 
@@ -15,24 +15,29 @@ export function TraceDetail({ traceId, onBack, onReplayClick }: TraceDetailProps
   const [error, setError] = useState("");
   const [expandedSpanId, setExpandedSpanId] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchTraceDetail() {
-      try {
-        setLoading(true);
-        setError("");
-        const data = await apiFetch(`/v1/traces/${traceId}`);
-        setTrace(data);
-        const tree = buildSpanTree(data.spans || []);
-        const flatTree = flattenSpanTree(tree);
-        setSpans(flatTree);
-      } catch (err: any) {
+  const fetchTraceDetail = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await apiFetch(`/v1/traces/${traceId}`);
+      setTrace(data);
+      const tree = buildSpanTree(data.spans || []);
+      const flatTree = flattenSpanTree(tree);
+      setSpans(flatTree);
+    } catch (err: any) {
+      if (err.status === 404) {
+        setError("Trace not found");
+      } else {
         setError(err.message || "Failed to load trace detail.");
-      } finally {
-        setLoading(false);
       }
+    } finally {
+      setLoading(false);
     }
-    fetchTraceDetail();
   }, [traceId]);
+
+  useEffect(() => {
+    fetchTraceDetail();
+  }, [fetchTraceDetail]);
 
   const toggleExpand = (spanId: string) => {
     setExpandedSpanId(expandedSpanId === spanId ? null : spanId);
@@ -141,10 +146,31 @@ export function TraceDetail({ traceId, onBack, onReplayClick }: TraceDetailProps
 
       {/* Timeline View */}
       {spans.length === 0 ? (
-        <div className="bg-surface-container-lowest rounded-xl p-12 text-center border border-surface-container-high/60 shadow-ambient-lg">
-          <p className="text-sm text-secondary font-medium font-sans">
-            No spans found for this trace.
+        <div className="bg-surface-container-lowest rounded-xl p-12 text-center border border-surface-container-high/60 shadow-ambient-lg flex flex-col items-center max-w-xl mx-auto" data-testid="empty-spans">
+          <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary mb-4 border border-surface-container">
+            ⚠️
+          </div>
+          <h3 className="text-lg font-headline font-bold text-primary mb-2">
+            No spans captured
+          </h3>
+          <p className="text-sm text-on-surface-variant mb-6 font-sans">
+            This trace is empty and doesn't contain any spans yet. Check that your agent callbacks or instrumentation wrapper are running correctly.
           </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onBack}
+              className="inline-flex items-center justify-center rounded-lg px-4 py-2 bg-surface-container text-primary border border-surface-container-high/60 hover:bg-surface-container-high font-semibold text-xs transition"
+            >
+              Back to Traces
+            </button>
+            <button
+              onClick={() => fetchTraceDetail()}
+              className="inline-flex items-center justify-center rounded-lg px-4 py-2.5 bg-gradient-to-br from-primary to-primary-container text-on-primary font-semibold text-xs shadow-brand hover:opacity-90 transition active:scale-[0.98]"
+              data-testid="refresh-btn"
+            >
+              Refresh Details
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">

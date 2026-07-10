@@ -9,8 +9,9 @@ export function Onboarding({ onSuccess }: OnboardingProps) {
   const [mode, setMode] = useState<"create" | "existing">("create");
   const [projectName, setProjectName] = useState("");
   const [pastedKey, setPastedKey] = useState("");
-  const [createdKey, setCreatedKey] = useState("");
-  const [createdProjectName, setCreatedProjectName] = useState("");
+  const [createdKey, setCreatedKey] = useState(() => localStorage.getItem("statica_api_key") || "");
+  const [createdProjectName, setCreatedProjectName] = useState(() => localStorage.getItem("statica_project_name") || "your project");
+  const [isExisting] = useState(() => !!localStorage.getItem("statica_api_key"));
   const [activeTab, setActiveTab] = useState<"langchain" | "openai" | "otel">("langchain");
   const [showKey, setShowKey] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
@@ -31,6 +32,7 @@ export function Onboarding({ onSuccess }: OnboardingProps) {
       setCreatedKey(data.api_key);
       setCreatedProjectName(data.name);
       setApiKey(data.api_key);
+      localStorage.setItem("statica_project_name", data.name);
     } catch (err: any) {
       setError(err.message || "Failed to create project.");
     } finally {
@@ -50,6 +52,9 @@ export function Onboarding({ onSuccess }: OnboardingProps) {
       const data = await apiFetch("/v1/projects/me");
       // Key verified successfully
       setApiKey(pastedKey);
+      localStorage.setItem("statica_project_name", data.name || "Sandbox Project");
+      setCreatedProjectName(data.name || "Sandbox Project");
+      setCreatedKey(pastedKey);
       onSuccess(pastedKey);
     } catch (err: any) {
       localStorage.removeItem("statica_api_key");
@@ -125,13 +130,15 @@ trace.set_tracer_provider(provider)`
         <div className="bg-surface-container-lowest max-w-3xl w-full rounded-[2rem] p-8 shadow-ambient-lg border border-surface-container-high/60">
           <div className="text-center mb-8">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-secondary-container text-primary mb-3">
-              Project Created
+              {isExisting ? "Project Configuration" : "Project Created"}
             </span>
             <h2 className="text-3xl font-headline font-extrabold text-primary tracking-tight">
-              Welcome to {createdProjectName}
+              {isExisting ? `${createdProjectName} Setup` : `Welcome to ${createdProjectName}`}
             </h2>
             <p className="mt-2 text-sm text-on-surface-variant font-sans">
-              Here is your project API key and setup instructions. Store it securely.
+              {isExisting
+                ? "Here is your API key and setup instructions for this project."
+                : "Here is your project API key and setup instructions. Store it securely."}
             </p>
           </div>
 
