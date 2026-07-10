@@ -121,7 +121,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 2.1 — Database & Project Setup
 
-- [ ] **2.1.1 — Initialize Postgres database and run migrations**
+- [x] **2.1.1 — Initialize Postgres database and run migrations**
 
     **Description**: Set up the Postgres database (Supabase or managed Postgres) and apply the initial schema migration. This creates the `projects`, `traces`, and `replays` tables as specified in the design doc.
 
@@ -132,7 +132,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Migration is idempotent (safe to re-run).
     - Database connection is managed via environment variables (not hardcoded credentials).
 
-- [ ] **2.1.2 — Project creation and API key generation (`POST /v1/projects`)**
+- [x] **2.1.2 — Project creation and API key generation (`POST /v1/projects`)**
 
     **Description**: Implement the endpoint that creates a new project record in the database and returns a unique API key. This is the entry point for the signup flow, allowing a new user to get their API key without needing an existing account.
 
@@ -143,7 +143,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Duplicate project names are allowed (only `api_key` must be unique).
     - Returns HTTP 201 on success, 400 on invalid input.
 
-- [ ] **2.1.3 — API key authentication middleware**
+- [x] **2.1.3 — API key authentication middleware**
 
     **Description**: Implement the authentication layer for the FastAPI backend. All protected endpoints must validate the `Authorization: Bearer <key>` header against the `projects` table and attach the resolved `project_id` to the request context.
 
@@ -154,7 +154,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - The middleware is applied to all endpoints except `POST /v1/projects`.
     - No API key is ever logged in plaintext.
 
-- [ ] **2.1.4 — Get project info (`GET /v1/projects/me`)**
+- [x] **2.1.4 — Get project info (`GET /v1/projects/me`)**
 
     **Description**: Implement the endpoint that returns the authenticated project's metadata. Used by the frontend to display the current project name and confirm API key validity.
 
@@ -166,7 +166,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 2.2 — Trace Ingestion
 
-- [ ] **2.2.1 — Trace ingest endpoint (`POST /v1/ingest`)**
+- [x] **2.2.1 — Trace ingest endpoint (`POST /v1/ingest`)**
 
     **Description**: Implement the main ingest endpoint that receives a full trace payload (matching the schema from Module 1), validates it, and stores it as a JSONB blob in the `traces` table. This is the endpoint all SDKs and the OTel bridge will POST to.
 
@@ -180,7 +180,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 2.3 — Trace Retrieval
 
-- [ ] **2.3.1 — List traces endpoint (`GET /v1/traces`)**
+- [x] **2.3.1 — List traces endpoint (`GET /v1/traces`)**
 
     **Description**: Implement the endpoint that returns a paginated list of traces for the authenticated project. Supports filtering by status so failed runs appear first.
 
@@ -192,7 +192,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Supports `?limit=` and `?offset=` pagination params (default limit: 50).
     - A project cannot see another project's traces.
 
-- [ ] **2.3.2 — Trace detail endpoint (`GET /v1/traces/{id}`)**
+- [x] **2.3.2 — Trace detail endpoint (`GET /v1/traces/{id}`)**
 
     **Description**: Implement the endpoint that returns the full trace detail for a single trace, including all spans. Used by the frontend to render the trace timeline and span inspector.
 
@@ -204,7 +204,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 2.4 — Replay Engine
 
-- [ ] **2.4.1 — Replay endpoint (`POST /v1/replay`)**
+- [x] **2.4.1 — Replay endpoint (`POST /v1/replay`)**
 
     **Description**: Implement the replay engine endpoint. It accepts a `trace_id`, `span_id`, and `edited_input` (modified messages, params, tools for that one span), reconstructs the original LLM call with the edits applied, fires it at the provider's live API, and returns the new output alongside the original output for diffing.
 
@@ -222,7 +222,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
 
 ### Sprint 2.5 — Backend Unit & Integration Tests
 
-- [ ] **2.5.1 — Unit tests for auth middleware**
+- [x] **2.5.1 — Unit tests for auth middleware**
 
     **Description**: Write pytest tests for the API key authentication dependency in isolation, without spinning up a real database. Use a mock project store or SQLite in-memory database.
 
@@ -235,7 +235,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - All branches covered; 100% coverage on the auth module.
     - Tests run without a real Postgres instance (use dependency override or SQLite).
 
-- [ ] **2.5.2 — Integration tests for `POST /v1/ingest`**
+- [x] **2.5.2 — Integration tests for `POST /v1/ingest`**
 
     **Description**: Write pytest integration tests for the ingest endpoint using FastAPI's `TestClient` and a real test database (SQLite in-memory or a separate test Postgres schema). Tests use the real endpoint stack but with the database isolated per test.
 
@@ -248,7 +248,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: two projects' traces are stored independently and cannot be accessed across projects.
     - Database is reset between tests (transaction rollback or per-test schema).
 
-- [ ] **2.5.3 — Integration tests for `GET /v1/traces` and `GET /v1/traces/{id}`**
+- [x] **2.5.3 — Integration tests for `GET /v1/traces` and `GET /v1/traces/{id}`**
 
     **Description**: Write pytest integration tests for the trace retrieval endpoints, seeding the database with fixture traces and asserting correct filtering, pagination, and isolation.
 
@@ -262,7 +262,7 @@ All Python code is tested with **pytest**. All Python code is formatted with **b
     - Covers: detail endpoint returns 404 for a trace belonging to another project.
     - Covers: detail endpoint returns 404 for a nonexistent trace ID.
 
-- [ ] **2.5.4 — Integration tests for `POST /v1/replay`**
+- [x] **2.5.4 — Integration tests for `POST /v1/replay`**
 
     **Description**: Write pytest integration tests for the replay endpoint. The outbound call to the provider API (OpenAI / Anthropic) is mocked using `pytest-httpx` or `respx` — real `httpx` or `requests` calls are intercepted and a fake response is returned. The actual replay engine logic (constructing the provider call, parsing the response) is exercised end-to-end except for the network hop.
 
